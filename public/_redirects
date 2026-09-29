@@ -1,0 +1,3 @@
+# Known routes are emitted as static directories by npm run build.
+# Do not rewrite unknown URLs to the homepage; preserve the generated 404.
+/* /404.html 404

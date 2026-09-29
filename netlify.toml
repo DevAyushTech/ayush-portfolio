@@ -1,0 +1,6 @@
+[build]
+  command = "npm run build:production"
+  publish = "dist"
+
+# Set VITE_SITE_URL to the real HTTPS portfolio origin in Netlify's environment UI.
+# Do not add a homepage rewrite: routes and the 404 are prerendered.

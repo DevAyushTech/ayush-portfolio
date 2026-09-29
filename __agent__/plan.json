@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "title": "Inspect current profile, SEO, resume, and social integration",
+      "status": "done"
+    },
+    {
+      "title": "Update centralized identity, real social URLs, email, and resume path",
+      "status": "done"
+    },
+    {
+      "title": "Update homepage, footer, social surfaces, and structured data",
+      "status": "done"
+    },
+    {
+      "title": "Enable production indexing metadata and add resume placeholder handling",
+      "status": "done"
+    },
+    {
+      "title": "Run build, SEO, link, and security verification",
+      "status": "done"
+    }
+  ],
+  "updated_at": "2026-09-29T19:26:53.158Z",
+  "session_id": "01a0ee39-501a-7726-be17-af89caf6a083"
+}

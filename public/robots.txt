@@ -1,0 +1,3 @@
+# Generated in dist during npm run build. Preview default is intentionally private.
+User-agent: *
+Disallow: /

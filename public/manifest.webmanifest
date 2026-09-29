@@ -1,0 +1,10 @@
+{
+  "name": "Ayush Kumar Singh — Digital System",
+  "short_name": "Ayush Kumar Singh",
+  "description": "The personal digital headquarters of Ayush Kumar Singh, an AI/ML builder and CSE student.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f6f0",
+  "theme_color": "#20231f",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

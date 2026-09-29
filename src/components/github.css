@@ -1,0 +1,36 @@
+.github-section { background: #e9e8e0; padding-top: 106px; padding-bottom: 116px; }
+.github-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 12vw; padding: 72px 0 50px; align-items: end; }
+.github-heading h2 { font: 500 clamp(56px, 7vw, 102px)/.85 var(--display); letter-spacing: -.09em; margin: 28px 0 0; }
+.github-heading h2 em { color: var(--orange); font-style: normal; }
+.github-heading > p { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 370px; margin: 0 0 5px; }
+.github-toolbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; display: flex; gap: 22px; align-items: center; font: 10px var(--mono); }
+.github-toolbar a { font-weight: 500; display: inline-flex; align-items: center; gap: 7px; }
+.github-toolbar > span { color: var(--muted); }
+.github-toolbar button { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font: 10px var(--mono); color: var(--orange); }
+.github-empty { display: grid; grid-template-columns: 64px 1fr; gap: 24px; border: 1px solid var(--line); padding: 28px; margin-top: 25px; background: var(--paper); }
+.github-empty-mark { width: 56px; height: 56px; background: var(--ink); color: var(--acid); display: grid; place-items: center; }
+.github-empty h3 { font: 500 21px var(--display); margin: 10px 0 8px; }
+.github-empty p, .github-error { color: var(--muted); font-size: 12px; line-height: 1.55; margin: 0; }
+.github-empty code { color: var(--orange); font: 11px var(--mono); }
+.github-repo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 25px; }
+.github-repo { min-height: 205px; display: flex; flex-direction: column; background: var(--paper); padding: 17px; border: 1px solid transparent; transition: transform .2s, border-color .2s; }
+.github-repo:hover, .github-repo:focus-visible { transform: translateY(-4px); border-color: var(--ink); outline: none; }
+.github-repo > div:first-child { display: flex; justify-content: space-between; color: var(--orange); font: 9px var(--mono); }
+.github-repo h3 { font: 500 20px var(--display); letter-spacing: -.04em; margin: 31px 0 7px; }
+.github-repo p { color: var(--muted); font-size: 11px; line-height: 1.45; margin: 0; }
+.github-repo footer { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; color: var(--muted); font: 9px var(--mono); margin-top: auto; padding-top: 20px; }
+.github-repo footer span { display: inline-flex; gap: 4px; align-items: center; }
+.github-repo time { margin-left: auto; }
+.github-activity { border-top: 1px solid var(--line); margin-top: 45px; padding-top: 16px; }
+.github-activity > div { display: grid; grid-template-columns: 85px 160px 1fr; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--line); font: 11px var(--mono); }
+.github-activity > div > span { color: var(--orange); font-size: 9px; }
+.github-activity strong { font-weight: 500; }
+.github-activity em { font-style: normal; color: var(--muted); }
+.github-activity p { color: var(--muted); font-size: 12px; }
+.github-loading, .github-error { padding: 32px 0; }
+.github-loading { display: flex; align-items: center; gap: 7px; color: var(--muted); font: 11px var(--mono); }
+.github-loading span { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; animation: githubPulse 1s infinite alternate; }
+.github-loading span:nth-child(2) { animation-delay: .2s; }.github-loading span:nth-child(3) { animation-delay: .4s; }
+@keyframes githubPulse { to { opacity: .2; transform: translateY(-3px); } }
+.github-footnote { display: flex; justify-content: space-between; gap: 20px; padding-top: 30px; color: var(--muted); font: 9px var(--mono); }
+@media (max-width: 700px) { .github-heading { display: block; padding-top: 50px; }.github-heading > p { margin-top: 28px; }.github-repo-grid { grid-template-columns: 1fr; }.github-activity > div { grid-template-columns: 70px 1fr; }.github-activity em { grid-column: 2; }.github-footnote { display: block; }.github-footnote span { display: block; margin-top: 8px; }.github-empty { grid-template-columns: 1fr; } }
