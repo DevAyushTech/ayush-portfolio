@@ -12,7 +12,7 @@ export type Achievement = {
 export type PortfolioContent = {
   announcement?: string
   achievements?: Achievement[]
-  profile?: Record<string, unknown>
+  profile?: { bio?: string }
   [key: string]: unknown
 }
 
