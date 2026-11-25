@@ -114,7 +114,7 @@ export default function AdminPage() {
         <div className="admin-editor">
           <label htmlFor="portfolio-content">Editable content (JSON)</label>
           <textarea id="portfolio-content" spellCheck={false} value={contentText} onChange={(event) => setContentText(event.target.value)} />
-          <p className="admin-help">Use <code>announcement</code> as a short homepage update and <code>achievements</code> as an array of items with title, organization, date, description, and optional url. Keep valid JSON.</p>
+          <p className="admin-help">Use <code>announcement</code> for a homepage update, <code>profile.bio</code> to override the hero summary, and <code>achievements</code> as an array of items with title, organization, date, description, and optional url. Keep valid JSON.</p>
           <button className="admin-primary" disabled={busy} onClick={() => void save()}>{busy ? 'Saving…' : 'Save changes'}</button>
         </div>
       </>}
