@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import './styles.css'
 import './identity.css'
+import './cms.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode><App initialPath={window.location.pathname} /></StrictMode>,
