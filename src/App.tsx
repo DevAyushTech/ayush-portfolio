@@ -2,6 +2,8 @@ import { FormEvent, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, BriefcaseBusiness, Camera, Check, Circle, Code2, Command, Download, ExternalLink, Menu, Play, Radar, Send, Sparkles, X } from 'lucide-react'
 import { GitHubSection } from './components/GitHubSection'
 import { hackathons, isRealHttpUrl, journey, journal, profile, projects, skillGroups, type Project } from './data'
+import AdminPage from './AdminPage'
+import { fetchPortfolioContent, type PortfolioContent } from './supabase-content'
 import { applyPageMeta } from './seo'
 import { SocialIcon, SocialLinks } from './components/SocialLinks'
 import { ResumeActions, resumeUploadPending } from './components/ResumeActions'
@@ -26,11 +28,20 @@ function App({ initialPath = '/' }: AppProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [systemOpen, setSystemOpen] = useState(false)
   const [toast, setToast] = useState('')
+  const [portfolioContent, setPortfolioContent] = useState<PortfolioContent>({})
 
   useEffect(() => {
     const onPopState = () => setPath(cleanPath(window.location.pathname))
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  useEffect(() => {
+    let active = true
+    const refreshContent = () => fetchPortfolioContent().then((value) => { if (active) setPortfolioContent(value) })
+    void refreshContent()
+    const interval = window.setInterval(() => { void refreshContent() }, 30000)
+    return () => { active = false; window.clearInterval(interval) }
   }, [])
 
   useEffect(() => {
@@ -65,7 +76,7 @@ function App({ initialPath = '/' }: AppProps) {
   }
 
   const project = projects.find((item) => path === `/projects/${item.id}`)
-  const page = project ? <ProjectDetail project={project} navigate={navigate} onToast={showToast} /> : path === '/' ? <HomePage navigate={navigate} /> : path === '/about' ? <AboutPage navigate={navigate} /> : path === '/projects' ? <ProjectsPage navigate={navigate} /> : path === '/journey' ? <JourneyPage /> : path === '/hackathons' ? <HackathonsPage navigate={navigate} /> : path === '/writing' ? <WritingPage navigate={navigate} /> : path === '/contact' ? <ContactPage showToast={showToast} /> : path === '/resume' ? <ResumePage navigate={navigate} /> : <NotFound navigate={navigate} />
+  const page = path === '/admin' ? <AdminPage /> : project ? <ProjectDetail project={project} navigate={navigate} onToast={showToast} /> : path === '/' ? <HomePage navigate={navigate} portfolioContent={portfolioContent} /> : path === '/about' ? <AboutPage navigate={navigate} /> : path === '/projects' ? <ProjectsPage navigate={navigate} /> : path === '/journey' ? <JourneyPage /> : path === '/hackathons' ? <HackathonsPage navigate={navigate} /> : path === '/writing' ? <WritingPage navigate={navigate} /> : path === '/contact' ? <ContactPage showToast={showToast} /> : path === '/resume' ? <ResumePage navigate={navigate} /> : <NotFound navigate={navigate} />
 
   return <div className="app-shell">
     <div className="grain" aria-hidden="true" />
@@ -89,10 +100,11 @@ function Header({ path, menuOpen, setMenuOpen, setSystemOpen, navigate }: { path
   </>
 }
 
-function HomePage({ navigate }: { navigate: (path: string) => void }) {
+function HomePage({ navigate, portfolioContent }: { navigate: (path: string) => void; portfolioContent: PortfolioContent }) {
   return <>
-    <section className="hero section-pad"><div className="hero-grid-lines" aria-hidden="true" /><div className="hero-copy"><p className="eyebrow"><span className="status-dot" /> STUDENT BUILDER / WEST BENGAL</p><h1>Hi, I'm<br /><span className="hero-name">{profile.name}.</span></h1><p className="alternate-name">Also known as {profile.alternateName}</p><div className="hero-statement"><span className="statement-index">01 /</span><p>Computer Science & Engineering student specializing in <strong>Artificial Intelligence & Machine Learning</strong>, building intelligent products, full-stack applications and experimental technology.</p></div><RotatingKeywords /><div className="hero-ctas"><button className="button button-dark" onClick={() => navigate('/projects')}>View my work <ArrowDownRight size={17} /></button><SocialButton type="github" label="GitHub" compact onPending={() => navigate('/contact')} /><SocialButton type="linkedin" label="LinkedIn" compact onPending={() => navigate('/contact')} /><SocialButton type="instagram" label="Instagram" /><ResumeActions /><a className="text-link" href={`mailto:${profile.email}`}>Email me <Send size={15} /></a><button className="text-link" onClick={() => navigate('/contact')}>Contact me <ArrowRight size={15} /></button></div>{resumeUploadPending && <p className="resume-notice">Resume PDF awaiting upload. <a href="/resume">Resume details</a></p>}</div><HeroVisual /><div className="hero-footer-line"><span>{profile.identity}</span><span>Scroll to explore <ArrowDownRight size={15} /></span></div></section>
+    <section className="hero section-pad"><div className="hero-grid-lines" aria-hidden="true" /><div className="hero-copy"><p className="eyebrow"><span className="status-dot" /> STUDENT BUILDER / WEST BENGAL</p><h1>Hi, I'm<br /><span className="hero-name">{profile.name}.</span></h1><p className="alternate-name">Also known as {profile.alternateName}</p><div className="hero-statement"><span className="statement-index">01 /</span><p>{portfolioContent.profile?.bio || <>Computer Science & Engineering student specializing in <strong>Artificial Intelligence & Machine Learning</strong>, building intelligent products, full-stack applications and experimental technology.</>}</p></div><RotatingKeywords /><div className="hero-ctas"><button className="button button-dark" onClick={() => navigate('/projects')}>View my work <ArrowDownRight size={17} /></button><SocialButton type="github" label="GitHub" compact onPending={() => navigate('/contact')} /><SocialButton type="linkedin" label="LinkedIn" compact onPending={() => navigate('/contact')} /><SocialButton type="instagram" label="Instagram" /><ResumeActions /><a className="text-link" href={`mailto:${profile.email}`}>Email me <Send size={15} /></a><button className="text-link" onClick={() => navigate('/contact')}>Contact me <ArrowRight size={15} /></button></div>{resumeUploadPending && <p className="resume-notice">Resume PDF awaiting upload. <a href="/resume">Resume details</a></p>}</div><HeroVisual /><div className="hero-footer-line"><span>{profile.identity}</span><span>Scroll to explore <ArrowDownRight size={15} /></span></div></section>
     <section className="ticker" aria-label="Areas of focus"><div className="ticker-track"><span>AI / ML</span><i>✳</i><span>FULL-STACK DEVELOPMENT</span><i>✳</i><span>INTELLIGENT SYSTEMS</span><i>✳</i><span>HACKATHON PROJECTS</span><i>✳</i><span>DEVELOPER TOOLS</span><i>✳</i><span>AI / ML</span><i>✳</i><span>FULL-STACK DEVELOPMENT</span></div></section>
+    {(portfolioContent.announcement || (portfolioContent.achievements?.length ?? 0) > 0) && <section className="cms-updates section-pad"><div className="cms-updates-head"><span>PORTFOLIO UPDATES / LIVE</span>{portfolioContent.announcement && <p>{portfolioContent.announcement}</p>}</div>{(portfolioContent.achievements?.length ?? 0) > 0 && <div className="cms-achievements">{portfolioContent.achievements?.map((item, index) => <article key={`${item.title}-${index}`}><span>{item.date || 'ACHIEVEMENT'}{item.organization ? ` / ${item.organization}` : ''}</span><h3>{item.title}</h3>{item.description && <p>{item.description}</p>}{item.url && isRealHttpUrl(item.url) && <a href={item.url} target="_blank" rel="noreferrer">View details <ArrowUpRight size={14} /></a>}</article>)}</div>}</section>}
     <IdentitySection navigate={navigate} />
     <AboutSection navigate={navigate} />
     <WorkSection navigate={navigate} />
