@@ -32,7 +32,8 @@ for (const pathname of paths) {
 const notFound = renderer.render('/404')
 await fs.writeFile(path.join(dist, '404.html'), renderDocument('/404', notFound))
 
-const urls = validSiteUrl ? paths.map((pathname) => `  <url><loc>${siteUrl.replace(/\/$/, '')}${pathname === '/' ? '/' : pathname}</loc></url>`).join('\n') : '  <!-- Set VITE_SITE_URL to a real HTTPS domain to publish sitemap URLs. -->'
+const sitemapPaths = paths.filter((pathname) => pathname !== '/admin')
+const urls = validSiteUrl ? sitemapPaths.map((pathname) => `  <url><loc>${siteUrl.replace(/\/$/, '')}${pathname === '/' ? '/' : pathname}</loc></url>`).join('\n') : '  <!-- Set VITE_SITE_URL to a real HTTPS domain to publish sitemap URLs. -->'
 await fs.writeFile(path.join(dist, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`)
 await fs.writeFile(path.join(dist, 'robots.txt'), validSiteUrl ? `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl.replace(/\/$/, '')}/sitemap.xml\n` : 'User-agent: *\nDisallow: /\n')
 
