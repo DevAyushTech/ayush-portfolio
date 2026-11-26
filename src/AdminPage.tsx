@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import './admin.css'
 import { fetchPortfolioContent, type Achievement, type PortfolioContent } from './supabase-content'
+import { getEditableSite, type EditableSite } from './data'
 
 const SUPABASE_URL = 'https://ajsguwoenolcdahguzjc.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_BOGmNbRLkcK5NTq38xtduA_GSCBuobp'
 const OWNER_EMAIL = 'connect.ayushkumarsingh@gmail.com'
 const TOKEN_KEY = 'portfolio-admin-session'
+const DEFAULT_AVATAR = 'https://github.com/DevAyushTech.png?size=800'
 
 type AuthUser = { id: string; email?: string }
 type Session = { access_token: string; refresh_token?: string; expires_at?: number; user: AuthUser }
@@ -30,11 +32,24 @@ async function refreshSession(current: Session): Promise<Session> {
   return next
 }
 
+function validImageUrl(value: string) {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' || url.protocol === 'http:'
+  } catch { return value.startsWith('/') && !value.startsWith('//') }
+}
+
+function prettySite(site: EditableSite) {
+  return JSON.stringify(site, null, 2)
+}
+
 export default function AdminPage() {
   const [email, setEmail] = useState(OWNER_EMAIL)
   const [password, setPassword] = useState('')
   const [session, setSession] = useState<Session | null>(null)
   const [content, setContent] = useState<PortfolioContent>({ announcement: '', achievements: [], profile: { bio: '' } })
+  const [siteJson, setSiteJson] = useState(() => prettySite(getEditableSite()))
+  const [avatarUrl, setAvatarUrl] = useState(DEFAULT_AVATAR)
   const [status, setStatus] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -48,9 +63,7 @@ export default function AdminPage() {
           void refreshSession(value).then(setSession).catch(() => { sessionStorage.removeItem(TOKEN_KEY) })
         } else setSession(value)
       }
-    } catch {
-      sessionStorage.removeItem(TOKEN_KEY)
-    }
+    } catch { sessionStorage.removeItem(TOKEN_KEY) }
   }, [])
 
   useEffect(() => {
@@ -58,13 +71,17 @@ export default function AdminPage() {
     let cancelled = false
     fetchPortfolioContent().then((value) => {
       if (cancelled) return
+      const site = value.site ?? getEditableSite()
+      if (value.profile?.bio && site.profile) site.profile.bio = value.profile.bio
+      setSiteJson(prettySite(site))
+      setAvatarUrl(site.profile?.avatarUrl || DEFAULT_AVATAR)
       setContent({
         ...value,
         announcement: value.announcement ?? '',
         achievements: value.achievements ?? [],
-        profile: { ...value.profile, bio: value.profile?.bio ?? '' },
+        profile: { ...value.profile, bio: value.profile?.bio ?? site.profile?.bio ?? '' },
       })
-    })
+    }).catch(() => { if (!cancelled) setStatus('Could not load saved content. You can still edit the default site data.') })
     return () => { cancelled = true }
   }, [session])
 
@@ -93,37 +110,48 @@ export default function AdminPage() {
       achievements: (current.achievements ?? []).map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item),
     }))
   }
+  function addAchievement() { setContent((current) => ({ ...current, achievements: [...(current.achievements ?? []), { title: '' }] })) }
+  function removeAchievement(index: number) { setContent((current) => ({ ...current, achievements: (current.achievements ?? []).filter((_, itemIndex) => itemIndex !== index) })) }
 
-  function addAchievement() {
-    setContent((current) => ({ ...current, achievements: [...(current.achievements ?? []), { title: '' }] }))
-  }
-
-  function removeAchievement(index: number) {
-    setContent((current) => ({ ...current, achievements: (current.achievements ?? []).filter((_, itemIndex) => itemIndex !== index) }))
+  function updateAvatar(value: string) {
+    setAvatarUrl(value)
+    try {
+      const parsed = JSON.parse(siteJson) as EditableSite
+      parsed.profile = { ...parsed.profile, avatarUrl: value }
+      setSiteJson(prettySite(parsed))
+    } catch { /* Keep the URL field usable while the JSON is being repaired. */ }
   }
 
   async function save() {
     if (!session) return
-    const achievements = content.achievements ?? []
-    if (achievements.some((item) => !item.title.trim())) {
-      setStatus('Add a title to each achievement or remove the empty item.')
+    let site: EditableSite
+    try {
+      const parsed = JSON.parse(siteJson)
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('The site content must be a JSON object.')
+      site = parsed as EditableSite
+      if (site.profile && typeof site.profile !== 'object') throw new Error('profile must be an object.')
+      for (const key of ['projects', 'skillGroups', 'journey', 'journal', 'hackathons'] as const) {
+        if (site[key] !== undefined && !Array.isArray(site[key])) throw new Error(`${key} must be an array.`)
+      }
+      if (!validImageUrl(avatarUrl.trim())) throw new Error('Avatar must be a valid http(s) image URL or a site path.')
+      site.profile = { ...site.profile, avatarUrl: avatarUrl.trim(), avatarAlt: site.profile?.avatarAlt || 'Ayush Kumar Singh' }
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : 'Please fix the site JSON.')
       return
     }
+    const achievements = content.achievements ?? []
+    if (achievements.some((item) => !item.title.trim())) { setStatus('Add a title to each achievement or remove the empty item.'); return }
     for (const item of achievements) {
       if (item.url) {
-        try {
-          const url = new URL(item.url)
-          if (url.protocol !== 'https:' && url.protocol !== 'http:') throw new Error()
-        } catch { setStatus('Achievement links must be valid http or https URLs.'); return }
+        try { const url = new URL(item.url); if (url.protocol !== 'https:' && url.protocol !== 'http:') throw new Error() }
+        catch { setStatus('Achievement links must be valid http or https URLs.'); return }
       }
     }
     setBusy(true); setStatus('')
     try {
       let current = session
-      if (current.expires_at && current.expires_at * 1000 < Date.now() + 60000) {
-        current = await refreshSession(current)
-        setSession(current)
-      }
+      if (current.expires_at && current.expires_at * 1000 < Date.now() + 60000) { current = await refreshSession(current); setSession(current) }
+      const payload = { ...content, profile: { bio: site.profile?.bio ?? '' }, site, achievements }
       const response = await fetch(`${SUPABASE_URL}/rest/v1/portfolio_content?on_conflict=id`, {
         method: 'POST',
         headers: {
@@ -132,16 +160,13 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
           Prefer: 'resolution=merge-duplicates,return=representation',
         },
-        body: JSON.stringify({
-          id: 'site',
-          content: { ...content, achievements },
-          updated_at: new Date().toISOString(),
-          updated_by: current.user.id,
-        }),
+        body: JSON.stringify({ id: 'site', content: payload, updated_at: new Date().toISOString(), updated_by: current.user.id }),
       })
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.message || data.details || 'Save failed. Check your session and database policy.')
-      setStatus('Saved. The public homepage will update within about 30 seconds.')
+      setContent(payload)
+      setSiteJson(prettySite(site))
+      setStatus('Saved. Profile, projects, skills, journey, hackathons and notes will refresh on the public site within about 30 seconds.')
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Could not save content.')
     } finally { setBusy(false) }
@@ -156,8 +181,8 @@ export default function AdminPage() {
     <a className="admin-back" href="/">← Back to portfolio</a>
     <section className="admin-panel">
       <p className="admin-eyebrow">PORTFOLIO CMS / PRIVATE</p>
-      <h1>{session ? 'Content dashboard' : 'Admin sign in'}</h1>
-      <p className="admin-intro">Manage achievements, homepage announcement and profile summary. Changes are saved to Supabase and do not require a site redeploy.</p>
+      <h1>{session ? 'Full content dashboard' : 'Admin sign in'}</h1>
+      <p className="admin-intro">Edit the portfolio data without a redeploy. The dashboard includes profile/avatar, all project details, skills, journey, hackathons, journal entries, announcements and achievements.</p>
       {!session ? <form className="admin-auth" onSubmit={(event) => { event.preventDefault(); void login(false) }}>
         <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="username" /></label>
         <label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={8} autoComplete="current-password" /></label>
@@ -168,7 +193,14 @@ export default function AdminPage() {
         <div className="admin-session"><span>Signed in as {session.user.email}</span><button className="admin-secondary" onClick={logout}>Sign out</button></div>
         <div className="admin-editor">
           <label>Homepage announcement<textarea rows={3} value={content.announcement ?? ''} onChange={(event) => setContent((current) => ({ ...current, announcement: event.target.value }))} placeholder="A short update shown on the homepage" /></label>
-          <label>Profile summary<textarea rows={4} value={content.profile?.bio ?? ''} onChange={(event) => setContent((current) => ({ ...current, profile: { ...current.profile, bio: event.target.value } }))} placeholder="Leave empty to keep the current homepage summary" /></label>
+          <div className="admin-avatar-editor">
+            <label>Profile avatar image URL<input value={avatarUrl} onChange={(event) => updateAvatar(event.target.value)} placeholder="https://.../your-photo.jpg" /></label>
+            <img src={avatarUrl || '/avatar.svg'} alt="Avatar preview" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/avatar.svg' }} />
+            <p className="admin-help">Use a direct image URL (JPG, PNG, or WebP). Your GitHub profile avatar is prefilled; replace it with the exact photo you want.</p>
+          </div>
+          <div className="admin-achievements-head"><h2>All portfolio content</h2><button className="admin-secondary" type="button" onClick={() => { const fresh = getEditableSite(); setSiteJson(prettySite(fresh)); setAvatarUrl(fresh.profile?.avatarUrl || DEFAULT_AVATAR); setStatus('Loaded the default content into the editor. Save to publish it.') }}>Load default data</button></div>
+          <label>Full site data — JSON editor<textarea className="admin-site-json" rows={26} spellCheck={false} value={siteJson} onChange={(event) => setSiteJson(event.target.value)} /></label>
+          <p className="admin-help">Edit the JSON for profile fields and socials, every project (description, status, links, stack, architecture), skill groups, journey timeline, hackathons and journal notes. Keep the top-level object and array structure valid, then save.</p>
           <div className="admin-achievements-head"><h2>Achievements</h2><button className="admin-secondary" type="button" onClick={addAchievement}>+ Add achievement</button></div>
           {(content.achievements ?? []).map((item, index) => <article className="admin-achievement" key={index}>
             <div className="admin-achievement-title"><strong>Achievement {index + 1}</strong><button className="admin-remove" type="button" onClick={() => removeAchievement(index)}>Remove</button></div>
@@ -178,7 +210,7 @@ export default function AdminPage() {
             <label>Link (optional)<input type="url" value={item.url ?? ''} onChange={(event) => updateAchievement(index, 'url', event.target.value)} placeholder="https://..." /></label>
           </article>)}
           {(content.achievements ?? []).length === 0 && <p className="admin-help">No achievements added yet. Use “Add achievement” to publish one on the homepage.</p>}
-          <button className="admin-primary" disabled={busy} onClick={() => void save()}>{busy ? 'Saving…' : 'Save changes'}</button>
+          <button className="admin-primary" disabled={busy} onClick={() => void save()}>{busy ? 'Saving…' : 'Save all changes'}</button>
         </div>
       </>}
       {status && <p className="admin-status" role="status">{status}</p>}
