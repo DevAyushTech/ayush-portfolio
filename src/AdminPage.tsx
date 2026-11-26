@@ -7,7 +7,7 @@ const SUPABASE_URL = 'https://ajsguwoenolcdahguzjc.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_BOGmNbRLkcK5NTq38xtduA_GSCBuobp'
 const OWNER_EMAIL = 'connect.ayushkumarsingh@gmail.com'
 const TOKEN_KEY = 'portfolio-admin-session'
-const DEFAULT_AVATAR = 'https://github.com/DevAyushTech.png?size=800'
+const DEFAULT_AVATAR = 'https://avatars.githubusercontent.com/u/100674043?v=4'
 
 type AuthUser = { id: string; email?: string }
 type Session = { access_token: string; refresh_token?: string; expires_at?: number; user: AuthUser }
