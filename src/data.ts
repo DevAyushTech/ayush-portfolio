@@ -11,7 +11,7 @@ export const profile = {
   location: 'West Bengal, India',
   education: 'Narula Institute of Technology',
   email: 'connect.ayushkumarsingh@gmail.com',
-  avatarUrl: 'https://github.com/DevAyushTech.png?size=800',
+  avatarUrl: 'https://avatars.githubusercontent.com/u/100674043?v=4',
   avatarAlt: 'Ayush Kumar Singh',
   // Place your actual PDF at public/resume.pdf. No generated resume is supplied.
   resumeUrl: '/resume.pdf',
