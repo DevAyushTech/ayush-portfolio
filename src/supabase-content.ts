@@ -10,6 +10,7 @@ export type Achievement = {
 }
 
 export type PortfolioContent = {
+  site?: import('./data').EditableSite
   announcement?: string
   achievements?: Achievement[]
   profile?: { bio?: string }
