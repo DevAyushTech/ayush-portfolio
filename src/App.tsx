@@ -10,6 +10,8 @@ import { ResumeActions, resumeUploadPending } from './components/ResumeActions'
 
 export type AppProps = { initialPath?: string }
 
+const originalTextValues = new WeakMap<Node, string>()
+
 type RouteKey = 'about' | 'projects' | 'journey' | 'hackathons' | 'writing' | 'contact'
 const navItems: { label: string; path: string; key: RouteKey }[] = [
   { label: 'About', path: '/about', key: 'about' },
@@ -60,10 +62,11 @@ function App({ initialPath = '/' }: AppProps) {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
     let node: Node | null
     while ((node = walker.nextNode())) {
-      const original = node.nodeValue
-      if (original && Object.prototype.hasOwnProperty.call(overrides, original)) {
-        node.nodeValue = overrides[original]
-      }
+      const current = node.nodeValue
+      if (current === null) continue
+      const original = originalTextValues.get(node) ?? current
+      originalTextValues.set(node, original)
+      node.nodeValue = Object.prototype.hasOwnProperty.call(overrides, original) ? overrides[original] : original
     }
   }, [path, portfolioContent.site?.textOverrides, portfolioContent])
 
