@@ -6,7 +6,7 @@ import { getMeta, metaHead } from './seo'
 export const paths = [
   '/', '/about', '/projects',
   ...projects.map((project) => `/projects/${project.id}`),
-  '/journey', '/hackathons', '/writing', '/contact', '/resume',
+  '/journey', '/hackathons', '/writing', '/contact', '/resume', '/admin',
 ]
 
 export const siteUrl = SITE_URL
