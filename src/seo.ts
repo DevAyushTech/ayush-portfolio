@@ -22,6 +22,7 @@ export const pageMeta: Record<string, PageMeta> = {
   '/writing': { title: 'Engineering Journal | Ayush Kumar Singh', description: 'Notes and future technical writing topics from Ayush Kumar Singh on AI/ML learning, hackathon building, and practical software engineering.', path: '/writing' },
   '/contact': { title: 'Contact Ayush Kumar Singh | AI/ML & Full-Stack Developer', description: 'Connect with Ayush Kumar Singh about thoughtful software problems, AI/ML projects, full-stack experiments, and collaboration.', path: '/contact' },
   '/resume': { title: 'Resume | Ayush Kumar Singh', description: 'Resume and professional profile for Ayush Kumar Singh, B.Tech CSE student specializing in Artificial Intelligence & Machine Learning.', path: '/resume' },
+  '/admin': { title: 'Portfolio Admin | Ayush Kumar Singh', description: 'Private portfolio content management.', path: '/admin', noindex: true },
 }
 
 export const projectMeta = (project: Project): PageMeta => ({
