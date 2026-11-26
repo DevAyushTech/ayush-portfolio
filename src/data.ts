@@ -173,6 +173,8 @@ export type EditableSite = {
   journey?: typeof journey
   journal?: typeof journal
   hackathons?: typeof hackathons
+  /** Exact visible text replacements for editing static UI copy from the CMS. */
+  textOverrides?: Record<string, string>
 }
 
 function replaceItems<T>(target: T[], source: unknown) {
@@ -180,7 +182,7 @@ function replaceItems<T>(target: T[], source: unknown) {
 }
 
 export function getEditableSite(): EditableSite {
-  return JSON.parse(JSON.stringify({ profile, projects, skillGroups, journey, journal, hackathons })) as EditableSite
+  return JSON.parse(JSON.stringify({ profile, projects, skillGroups, journey, journal, hackathons, textOverrides: {} })) as EditableSite
 }
 
 export function applyEditableSite(site?: EditableSite) {
