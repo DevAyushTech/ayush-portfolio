@@ -50,6 +50,23 @@ function App({ initialPath = '/' }: AppProps) {
     return () => { document.body.style.overflow = '' }
   }, [path, systemOpen, menuOpen])
 
+  // CMS text overrides let the owner edit visible copy even where it is part of the fixed layout.
+  useEffect(() => {
+    if (path === '/admin') return
+    const overrides = portfolioContent.site?.textOverrides
+    if (!overrides || Object.keys(overrides).length === 0) return
+    const root = document.getElementById('main-content')
+    if (!root) return
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+    let node: Node | null
+    while ((node = walker.nextNode())) {
+      const original = node.nodeValue
+      if (original && Object.prototype.hasOwnProperty.call(overrides, original)) {
+        node.nodeValue = overrides[original]
+      }
+    }
+  }, [path, portfolioContent.site?.textOverrides, portfolioContent])
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
