@@ -11,6 +11,8 @@ export const profile = {
   location: 'West Bengal, India',
   education: 'Narula Institute of Technology',
   email: 'connect.ayushkumarsingh@gmail.com',
+  avatarUrl: 'https://github.com/DevAyushTech.png?size=800',
+  avatarAlt: 'Ayush Kumar Singh',
   // Place your actual PDF at public/resume.pdf. No generated resume is supplied.
   resumeUrl: '/resume.pdf',
   githubUsername: 'DevAyushTech',
@@ -160,4 +162,37 @@ export function personJsonLd() {
     affiliation: { '@type': 'CollegeOrUniversity', name: profile.education },
     sameAs,
   }
+}
+
+
+/** Editable portfolio data loaded from the owner-only CMS. */
+export type EditableSite = {
+  profile?: Partial<typeof profile>
+  projects?: Project[]
+  skillGroups?: typeof skillGroups
+  journey?: typeof journey
+  journal?: typeof journal
+  hackathons?: typeof hackathons
+}
+
+function replaceItems<T>(target: T[], source: unknown) {
+  if (Array.isArray(source)) target.splice(0, target.length, ...(source as T[]))
+}
+
+export function getEditableSite(): EditableSite {
+  return JSON.parse(JSON.stringify({ profile, projects, skillGroups, journey, journal, hackathons })) as EditableSite
+}
+
+export function applyEditableSite(site?: EditableSite) {
+  if (!site || typeof site !== 'object') return
+  if (site.profile && typeof site.profile === 'object') {
+    Object.assign(profile, site.profile)
+    if (site.profile.socials) profile.socials = { ...profile.socials, ...site.profile.socials }
+    if (Array.isArray(site.profile.exploring)) profile.exploring = [...site.profile.exploring]
+  }
+  replaceItems(projects, site.projects)
+  replaceItems(skillGroups, site.skillGroups)
+  replaceItems(journey, site.journey)
+  replaceItems(journal, site.journal)
+  replaceItems(hackathons, site.hackathons)
 }
