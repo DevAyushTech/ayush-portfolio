@@ -72,7 +72,7 @@ export default function AdminPage() {
     setBusy(true); setStatus('')
     try {
       if (email.trim().toLowerCase() !== OWNER_EMAIL) throw new Error('This admin account is restricted to the portfolio owner email.')
-      const data = await authRequest(signUp ? 'signup' : 'token?grant_type=password', { email: email.trim(), password })
+      const data = await authRequest(signUp ? `signup?redirect_to=${encodeURIComponent(window.location.origin + '/admin')}` : 'token?grant_type=password', { email: email.trim(), password })
       if (!data.access_token || !data.user) {
         setStatus('Account request submitted. Check your inbox and confirm the email address, then sign in.')
         return
