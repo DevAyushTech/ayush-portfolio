@@ -87,20 +87,20 @@ export const projects: Project[] = [
   {
     id: 'verifyx', number: '05', name: 'VerifyX', label: 'Trust-focused workflows',
     description: 'A verification-focused web application exploring clearer signals in job and identity workflows.',
-    problem: 'Verification processes often feel fragmented, opaque, and difficult to navigate.',
-    solution: 'A focused application concept that brings the workflow, evidence, and outcome into one place.',
+    problem: 'Job and identity checks can involve several disconnected steps. Applicants may not know what information is needed, reviewers may lack a consistent view of the evidence, and the status of a verification request can be difficult to understand.',
+    solution: 'VerifyX explores a clearer verification workflow: collect the relevant information, make the evidence and review state understandable, and show what action is expected next. The concept focuses on transparent status and a usable review path rather than claiming that an automated system can prove identity or guarantee that a job is genuine.',
     stack: ['React', 'REST APIs', 'Authentication', 'Database'], status: 'Exploring', category: 'WEB APPLICATION',
     githubUrl: '', liveUrl: '', architecture: ['Web client', 'API', 'Verification data', 'Review flow'], screenshots: [],
-    role: 'Application builder', outcome: 'An exploratory product concept; status remains intentionally conservative.',
+    role: 'Application builder', outcome: 'The current scope is an exploratory web application, not a production verification authority. Important next steps include validating the workflow with applicants and reviewers, defining how evidence is checked, protecting personal information, and documenting how disputed or incomplete submissions are handled. No employer integrations, verified identities, fraud reductions, or adoption figures are claimed.'
   },
   {
     id: 'bloomlink', number: '06', name: 'BloomLink', label: 'Connection layer',
     description: 'A project exploring how a simple product experience can connect people, ideas, and useful actions.',
-    problem: 'Good ideas lose momentum when the next useful connection is hidden behind friction.',
-    solution: 'A small, focused product exploration centered on discoverability and intentional interaction.',
+    problem: 'People can struggle to move from finding an interesting person, idea, or resource to taking a useful next step. When discovery, context, and follow-up are disconnected, a promising connection can be lost.',
+    solution: 'BloomLink explores a simple product experience for discovering relevant connections and making the next action easier to understand. The design question is how to present enough context for a meaningful choice without overwhelming the user. The work is framed as a product experiment, not as a launched social network or a platform with established user activity.',
     stack: ['React', 'JavaScript', 'CSS', 'GitHub'], status: 'Exploring', category: 'PRODUCT EXPERIMENT',
     githubUrl: '', liveUrl: '', architecture: ['Interface', 'Application logic', 'Data layer'], screenshots: [],
-    role: 'Product experimenter', outcome: 'A small product exploration without invented adoption or usage figures.',
+    role: 'Product experimenter', outcome: 'The exploratory scope considers discoverability, clear information hierarchy, intentional interactions, and a straightforward path from interest to action. A useful next validation step is to test whether people can find a relevant connection, understand why it is relevant, and complete the intended follow-up without extra explanation. No user counts, retention, partnerships, or business outcomes are claimed.'
   },
 ]
 
