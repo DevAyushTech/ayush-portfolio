@@ -11,8 +11,8 @@ export type PageMeta = {
 
 export const pageMeta: Record<string, PageMeta> = {
   '/': {
-    title: 'Ayush Kumar Singh | AI/ML Developer & CSE Student',
-    description: `${profile.name}, also known as ${profile.alternateName}, is a Computer Science & Engineering student specializing in Artificial Intelligence & Machine Learning, building AI, full-stack and experimental technology projects.`,
+    title: 'Ayush Kumar Singh (Ayush Singh) | AI/ML Developer',
+    description: `${profile.name} (${profile.alternateName}) is a B.Tech CSE student and AI/ML developer in West Bengal, India. Explore his AI/ML projects, software engineering work, and developer profile.`,
     path: '/',
   },
   '/about': { title: 'About Ayush Kumar Singh | AI/ML & Full-Stack Builder', description: `Learn about ${profile.name}, also known as ${profile.alternateName}, a CSE student in West Bengal building AI/ML, full-stack, and experimental technology projects.`, path: '/about' },
@@ -41,8 +41,8 @@ export function getMeta(pathname: string): PageMeta {
 export function getStructuredData(pathname: string): Record<string, unknown>[] {
   const meta = getMeta(pathname)
   const person = personJsonLd()
-  const website = { '@type': 'WebSite', '@id': absoluteUrl('/#website'), url: absoluteUrl('/'), name: 'Ayush Kumar Singh — Digital System', publisher: { '@id': absoluteUrl('/#person') } }
-  const profilePage = { '@type': 'ProfilePage', '@id': absoluteUrl('/#profile'), url: absoluteUrl('/'), mainEntity: { '@id': absoluteUrl('/#person') }, name: 'Ayush Kumar Singh — Digital System' }
+  const website = { '@type': 'WebSite', '@id': absoluteUrl('/#website'), url: absoluteUrl('/'), name: 'Ayush Kumar Singh', alternateName: 'Ayush Singh AI/ML Developer Portfolio', publisher: { '@id': absoluteUrl('/#person') } }
+  const profilePage = { '@type': 'ProfilePage', '@id': absoluteUrl('/#profile'), url: absoluteUrl('/'), mainEntity: { '@id': absoluteUrl('/#person') }, name: 'Ayush Kumar Singh — AI/ML Developer Portfolio' }
   const breadcrumb = { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') }, ...(pathname !== '/' ? [{ '@type': 'ListItem', position: 2, name: meta.title.split(' | ')[0], item: absoluteUrl(pathname) }] : [])] }
   const project = projects.find((item) => pathname === `/projects/${item.id}`)
   const article = meta.article
