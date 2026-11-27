@@ -12,11 +12,11 @@ export type PageMeta = {
 export const pageMeta: Record<string, PageMeta> = {
   '/': {
     title: 'Ayush Kumar Singh (Ayush Singh) | AI/ML Developer',
-    description: `${profile.name} (${profile.alternateName}) is a B.Tech CSE student and AI/ML developer in West Bengal, India. Explore his AI/ML projects, software engineering work, and developer profile.`,
+    description: `${profile.name} (${profile.alternateName}) is a B.Tech CSE and AI/ML student in West Bengal. Explore his software projects and developer profile.`,
     path: '/',
   },
   '/about': { title: 'About Ayush Kumar Singh | AI/ML & Full-Stack Builder', description: `Learn about ${profile.name}, also known as ${profile.alternateName}, a CSE student in West Bengal building AI/ML, full-stack, and experimental technology projects.`, path: '/about' },
-  '/projects': { title: 'Projects by Ayush Kumar Singh | AI, Full-Stack & Experimental Systems', description: 'Explore Auto Escrow, SatQuery AI, OrbitRakshak, GhostAudit AI, VerifyX, BloomLink, and other honest project explorations by Ayush Kumar Singh.', path: '/projects' },
+  '/projects': { title: 'AI & Software Projects | Ayush Singh', description: 'Explore Auto Escrow, SatQuery AI, OrbitRakshak, GhostAudit AI, VerifyX, BloomLink, and other honest project explorations by Ayush Kumar Singh.', path: '/projects' },
   '/journey': { title: 'Journey | Ayush Kumar Singh — CSE, AI/ML & Developer', description: 'The learning journey of Ayush Kumar Singh through B.Tech CSE, AI/ML exploration, full-stack development, hackathons, geospatial AI, and blockchain experiments.', path: '/journey' },
   '/hackathons': { title: 'Hackathons & Innovation | Ayush Kumar Singh', description: 'A project-led look at hackathon and innovation explorations by Ayush Kumar Singh across AI/ML, satellite imagery, orbital data, and backend systems.', path: '/hackathons' },
   '/writing': { title: 'Engineering Journal | Ayush Kumar Singh', description: 'Notes and future technical writing topics from Ayush Kumar Singh on AI/ML learning, hackathon building, and practical software engineering.', path: '/writing' },
@@ -25,9 +25,17 @@ export const pageMeta: Record<string, PageMeta> = {
   '/admin': { title: 'Portfolio Admin | Ayush Kumar Singh', description: 'Private portfolio content management.', path: '/admin', noindex: true },
 }
 
+const projectDescriptions: Record<string, string> = {
+  'auto-escrow': 'Auto Escrow by Ayush Kumar Singh: an escrow workflow prototype built around FastAPI, PostgreSQL and blockchain integration.',
+  'satquery-ai': 'SatQuery AI by Ayush Kumar Singh: exploring natural-language analysis of satellite imagery and geospatial data.',
+  orbitrakshak: 'OrbitRakshak by Ayush Kumar Singh: a satellite conjunction and collision-intelligence decision-support prototype.',
+  'ghostaudit-ai': 'GhostAudit AI by Ayush Kumar Singh: a React and Python dashboard for exploring fraud signals and anomalies in CSV data.',
+  verifyx: 'VerifyX by Ayush Kumar Singh: a web application concept for clearer job and identity verification workflows.',
+  bloomlink: 'BloomLink by Ayush Kumar Singh: a product experiment focused on discoverability, connections and useful next steps.',
+}
 export const projectMeta = (project: Project): PageMeta => ({
-  title: `${project.name} | Ayush Kumar Singh — Project Case Study`,
-  description: `${project.description} Read the problem, approach, architecture, technology, and current status.`,
+  title: `${project.name} | Ayush Singh`,
+  description: projectDescriptions[project.id] || `${project.name} by Ayush Kumar Singh: ${project.description}`,
   path: `/projects/${project.id}`,
 })
 
